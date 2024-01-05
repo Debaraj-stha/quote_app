@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:quote/data/localeDatabase.dart';
+import 'package:quote/main.dart';
 import 'package:quote/reposiory/quotesRepo.dart';
 import 'package:quote/resources/appURL.dart';
+import 'package:quote/resources/constraints.dart';
 import 'package:quote/utils/utils.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,8 +25,11 @@ class QuoteViewModel extends GetxController {
 
   final RxList _quotes = [].obs;
   List get quotes => _quotes.value;
-  static String key = "i";
+  final DBController _dbController = DBController();
+  final RxList _favouriteQuotes = [].obs;
+  List get favouriteQuotes => _favouriteQuotes.value;
   RxInt index = RxInt(0);
+  RxBool isLoading = RxBool(true);
   Future<void> copyToClipBoard(String text) async {
     try {
       await Clipboard.setData(ClipboardData(text: text));
@@ -92,14 +98,41 @@ class QuoteViewModel extends GetxController {
     }
   }
 
-  void addToFavouriteList(AnimationController controller, Quote q) {
+  void addToFavouriteList(AnimationController controller, Quote q) async {
     if (isFavourite.isTrue) {
       controller.reverse();
-      removeItemFromFavourite(q.id);
+      bool result = await _quoteRepo.removeFavouriteQotes(q.id);
+
+      if (result) {
+        Utils.showToastMessage("Quotes removed successfully from favorites.",
+            bgColor: Colors.green);
+        removeItemFromFavourite(q.id);
+        removeUnFavouriteItemFromList(q.id);
+        isFavourite.value = false;
+      } else {
+        Utils.showToastMessage(
+            "Something happen while removing quotes from favourite.",
+            bgColor: Colors.red);
+      }
       isFavourite.value = false;
     } else {
       controller.forward();
       storeFavouriteQuoteId(q);
+      await _quoteRepo.savedQuoteToFavouriteQotes(q).then((value) {
+        print("saved value");
+        print((value.toString()));
+        if (value) {
+          Utils.showToastMessage("Quotes favourites.", bgColor: Colors.green);
+          isFavourite.value = true;
+        } else {
+          Utils.showToastMessage(
+            "Something happen",
+          );
+        }
+      }).onError((error, stackTrace) {
+        print((error.toString()));
+        Utils.showToastMessage("Something happen $error", bgColor: Colors.red);
+      });
       isFavourite.value = true;
     }
     // toggleLiked();
@@ -110,13 +143,13 @@ class QuoteViewModel extends GetxController {
     final sp = await SharedPreferences.getInstance();
     List<String> ids = await getSavedQuoteId();
     ids.add(q.id);
-    sp.setStringList(key, ids);
+    sp.setStringList(Constraints.savedIdKey, ids);
     update();
   }
 
   Future<List<String>> getSavedQuoteId() async {
     final sp = await SharedPreferences.getInstance();
-    List<String> ids = sp.getStringList(key) ?? [];
+    List<String> ids = sp.getStringList(Constraints.savedIdKey) ?? [];
     return ids;
   }
 
@@ -126,17 +159,63 @@ class QuoteViewModel extends GetxController {
     print("id ss$id");
     final remainingId = x.where((element) => element != id).toList();
     print("after removing$remainingId");
-    sp.setStringList(key, remainingId);
+    sp.setStringList(Constraints.savedIdKey, remainingId);
     update();
   }
 
   void changeTab(int i) {
     index.value = i;
+
     update();
     print(i);
   }
 
   Future<void> shareQuote(String text) async {
     await Share.share(text, subject: "Share this quote");
+  }
+
+  getFavouriteQotes() async {
+    if (_favouriteQuotes.isEmpty) {
+      final List<Quote> data = await _quoteRepo.getFavouriteQotes();
+      print(data.length);
+      _favouriteQuotes.addAll(data);
+      isLoading.value = false;
+      update();
+      print(_favouriteQuotes);
+    }
+  }
+
+  deleteFavouriteQuote(String id) async {
+    bool result = await _quoteRepo.removeFavouriteQotes(id);
+    if (result) {
+      print("success");
+    } else {
+      print("fail");
+    }
+  }
+
+  toggleLoading() {
+    Future.delayed(const Duration(seconds: 3), () {
+      isLoading.value = false;
+      update();
+    });
+  }
+
+  handlePageChange(int index) {}
+  removeUnFavouriteItemFromList(String id) {
+    List removedItem = _favouriteQuotes.where((p0) => p0.id != id).toList();
+    if (kDebugMode) {
+      print("deleted item id $id");
+    }
+    _favouriteQuotes.value = removedItem;
+
+    update();
+  }
+
+  static void handleGetStarted(BuildContext context) async {
+    final sp = await SharedPreferences.getInstance();
+    sp.setBool(Constraints.isAlreadyOpenApp, true);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const MyHomePage()));
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:quote/data/localeDatabase.dart';
+import 'package:quote/reposiory/quotesRepo.dart';
 import 'package:quote/resources/components/IconButton.dart';
 import 'package:quote/resources/components/buildImage.dart';
-import 'package:quote/view_model/quoteViewModel.dart';
+import 'package:quote/view_model/homeViewMOdel.dart';
 
 class SingleQuote extends StatefulWidget {
   const SingleQuote(
@@ -107,12 +109,23 @@ class _SingleQuoteState extends State<SingleQuote>
             const SizedBox(
               height: 30,
             ),
-            Text(
-              q.author,
-              style: const TextStyle(
-                  fontSize: 25,
-                  fontFamily: "Roboto",
-                  fontWeight: FontWeight.w700),
+            Row(
+              children: [
+                const BuildImage(
+                    assetURL: "assets/hand-writing-with-ballpen.png"),
+                const SizedBox(
+                  width: 15,
+                ),
+                Expanded(
+                  child: Text(
+                    q.author,
+                    style: const TextStyle(
+                        fontSize: 25,
+                        fontFamily: "Roboto",
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: size.height * 0.1,
@@ -151,7 +164,7 @@ class _SingleQuoteState extends State<SingleQuote>
                     await _quoteViewModel.shareQuote(q.quote);
                   },
                   text: "Share",
-                )
+                ),
               ],
             )
           ],

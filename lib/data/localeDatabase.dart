@@ -18,47 +18,64 @@ class DBController {
 
   Future<Database> initDatabase() async {
     io.Directory directory = await getApplicationDocumentsDirectory();
-    String path = join(directory.toString(), "db.db");
+    String path = join(directory.toString(), "mydb.db");
     Database database = await openDatabase(
       path,
-      version: 1,
+      version: 1, // Increase the version number
       onCreate: (db, version) {
-        String sql =
-            "CREATE TABLE $tableName(id INTEGER PRIMARY KEY,author TEXT,quote TEXT)";
+        String sql = "CREATE TABLE $tableName(id TEXT,author TEXT,quote TEXT)";
         db.execute(sql);
       },
     );
+
     return database;
   }
 
-  Future<bool> deleteFavouriteQuote(int id) async {
-    var dbClient = await db;
-    await dbClient!.delete(
-      tableName,
-      where: "id=?",
-      whereArgs: ['id'],
-    ).then((value) {
-      return true;
-    });
-    return false;
+  Future<bool> deleteFavouriteQuote(String id) async {
+    try {
+      print("called remove $id");
+      var dbClient = await db;
+      final result = await dbClient!.delete(
+        tableName,
+        where: "id=?",
+        whereArgs: [id],
+      );
+      print("result is $result");
+
+      if (result == 1) {
+        print("value");
+        return true;
+      } else {
+        print("No records deleted.");
+        return false;
+      }
+    } catch (e) {
+      print("Error deleting quote: $e");
+      return false;
+    }
   }
 
-  Future<int> saveFavouriteQuote(Quote q) async {
+  Future<bool> saveFavouriteQuote(Quote q) async {
     var dbClient = await db;
     if (dbClient != null) {
-      dbClient.insert(tableName, q.toJson()).then((value) {
-        return value;
-      });
+      try {
+        int result = await dbClient.insert(tableName, q.toJson());
+        print("Insert result: $result");
+        return true;
+      } catch (error) {
+        print("Error during insert: $error");
+        return false;
+      }
     }
-    return 0;
+    return false;
   }
 
   Future<List<Quote>> getFavouriteQotes() async {
     var dbClient = await db;
-    if (dbClient != null) {
+    if (dbClient == null) {
       return [];
     }
-    List<Map<String, Object?>> result = await dbClient!.query(tableName);
+    List<Map<String, Object?>> result = await dbClient.query(tableName);
     return result.map((e) => Quote.fromJson(e)).toList();
   }
 }

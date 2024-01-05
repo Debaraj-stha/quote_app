@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quote/view/singleQuote.dart';
+import 'package:quote/resources/components/singleQuote.dart';
 
-import '../view_model/quoteViewModel.dart';
+import '../view_model/homeViewMOdel.dart';
 
 class Quotes extends StatefulWidget {
   const Quotes({super.key});

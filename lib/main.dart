@@ -2,56 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:quote/resources/appColor.dart';
+import 'package:quote/resources/constraints.dart';
 import 'package:quote/view/quotes.dart';
-import 'package:quote/view_model/favouriteQuote.dart';
-import 'package:quote/view_model/handleLocale.dart';
+import 'package:quote/view/favouriteQuote.dart';
+
 import 'package:quote/view_model/handleTheme.dart';
-import 'package:quote/view_model/quoteViewModel.dart';
+import 'package:quote/view_model/homeViewMOdel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'reposiory/themes.dart';
-import 'package:http/http.dart' as http;
 
-import 'view_model/account.dart';
+import 'view/account.dart';
+import 'view/userIntroPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final sp = await SharedPreferences.getInstance();
   final String language = sp.getString('locale') ?? "";
-
+  final String theme = sp.getString(Constraints.themeKey) ?? "default";
+  final ThemeMode themeMode = await HandleTheme().getThemeMode();
+  final bool isAlreadyOpenApp =
+      sp.getBool(Constraints.isAlreadyOpenApp) ?? false;
   runApp(MyApp(
-    locale: language,
-  ));
+      locale: language,
+      isAlreadyOpenApp: isAlreadyOpenApp,
+      themeMode: themeMode));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.locale});
+  const MyApp(
+      {super.key,
+      required this.locale,
+      required this.isAlreadyOpenApp,
+      required this.themeMode});
   final String locale;
-
+  final bool isAlreadyOpenApp;
+  final ThemeMode themeMode;
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
-      locale: locale != "" ? Locale(locale) : const Locale('en'),
-      supportedLocales: const [Locale('en'), Locale('np'), Locale('hi')],
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate
-      ],
-      theme: Themes().lightTheme,
-      darkTheme: Themes().darkTheme,
-      themeMode: ThemeController().getThemeMode(),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        locale: locale != "" ? Locale(locale) : const Locale('en'),
+        supportedLocales: const [Locale('en'), Locale('np'), Locale('hi')],
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate
+        ],
+        theme: Themes().lightTheme,
+        darkTheme: Themes().darkTheme,
+        themeMode: themeMode,
+        home: isAlreadyOpenApp ? const MyHomePage() : const UserIntroPage()
+        // const MyHomePage(title: 'Flutter Demo Home Page'),
+        );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();

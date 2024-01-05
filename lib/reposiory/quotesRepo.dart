@@ -30,31 +30,34 @@ class QuoteRepo {
     }
   }
 
-  Future<bool> removeFavouriteQotes(int id) {
+  Future<bool> removeFavouriteQotes(String id) async {
     try {
-      DBController()
-          .deleteFavouriteQuote(id)
-          .then((value) => value)
-          .onError((error, stackTrace) => false);
+      final result = await DBController().deleteFavouriteQuote(id);
+      return result;
     } catch (e) {
       rethrow;
     }
-    return Future.value(false);
   }
 
-  Future<int> savedQuoteToFavouriteQotes(Quote q) async {
+  Future<bool> savedQuoteToFavouriteQotes(Quote q) async {
     try {
-      await DBController().saveFavouriteQuote(q).then((value) {
-        return value;
-      }).onError((error, stackTrace) {
-        if (kDebugMode) {
-          print(error.toString());
-        }
-        return 0;
-      });
+      final result = await DBController().saveFavouriteQuote(q);
+      return result;
     } catch (e) {
       rethrow;
     }
-    return 0;
+  }
+
+  Future<List<Quote>> getFavouriteQotes() async {
+    try {
+      List<Quote> value = await DBController().getFavouriteQotes();
+      // print(value);
+      return value;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      return []; // Return an empty list in case of an error
+    }
   }
 }
