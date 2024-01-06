@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -13,13 +14,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'reposiory/themes.dart';
 
-import 'view/account.dart';
+import 'view/setting.dart';
 import 'view/userIntroPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final sp = await SharedPreferences.getInstance();
-  final String language = sp.getString('locale') ?? "";
+  final String language = sp.getString(Constraints.localeKey) ?? "";
   final String theme = sp.getString(Constraints.themeKey) ?? "default";
   final ThemeMode themeMode = await HandleTheme().getThemeMode();
   final bool isAlreadyOpenApp =
@@ -41,11 +42,14 @@ class MyApp extends StatelessWidget {
   final ThemeMode themeMode;
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      print("my locale$locale");
+    }
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         locale: locale != "" ? Locale(locale) : const Locale('en'),
-        supportedLocales: const [Locale('en'), Locale('np'), Locale('hi')],
+        supportedLocales: const [Locale('en'), Locale('ne'), Locale('hi')],
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -77,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _tabs = [
     const Quotes(),
     const FavouriteQuote(),
-    const Account()
+    const Setting()
   ];
 
   @override
@@ -100,22 +104,22 @@ class _MyHomePageState extends State<MyHomePage> {
               selectedIconTheme: const IconThemeData(color: Colors.black),
               selectedItemColor: Colors.black,
               unselectedItemColor: const Color.fromARGB(178, 2, 1, 1),
-              items: const [
+              items: [
                 BottomNavigationBarItem(
                   tooltip: "Home",
                   backgroundColor: Colors.red,
-                  icon: Icon(Icons.home_filled),
-                  label: "Home",
+                  icon: const Icon(Icons.home_filled),
+                  label: AppLocalizations.of(context)!.home,
                 ),
                 BottomNavigationBarItem(
                   tooltip: "Favourite",
-                  icon: Icon(Icons.favorite_outline_rounded),
-                  label: "Favourite",
+                  icon: const Icon(Icons.favorite_outline_rounded),
+                  label: AppLocalizations.of(context)!.favourite,
                 ),
                 BottomNavigationBarItem(
-                  tooltip: "Account",
-                  icon: Icon(Icons.person),
-                  label: "Account",
+                  tooltip: "Setting",
+                  icon: const Icon(Icons.person),
+                  label: AppLocalizations.of(context)!.settings,
                 ),
               ],
             ),

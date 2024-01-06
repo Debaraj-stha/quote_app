@@ -1,3 +1,13 @@
 {
-    "home":"home"
+    "home":"Home",
+    "favourite":"Favourite",
+    "settings":"Setting",
+    "copy":"Copy",
+    "share":"Share",
+    "theme":"Theme",
+    "dark":"Dark",
+    "light":"Light",
+    "system":"Systemn Default",
+    "language":"Language",
+    "quit":"Quit"
 }

@@ -4,15 +4,16 @@ import 'package:quote/resources/locale.dart';
 import 'package:quote/view_model/handleLocale.dart';
 
 import '../view_model/handleTheme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class Account extends StatefulWidget {
-  const Account({super.key});
+class Setting extends StatefulWidget {
+  const Setting({super.key});
 
   @override
-  State<Account> createState() => _AccountState();
+  State<Setting> createState() => _SettingState();
 }
 
-class _AccountState extends State<Account> {
+class _SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +30,7 @@ class _AccountState extends State<Account> {
               childrenPadding:
                   const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               maintainState: true,
-              title: const Text("Theme"),
+              title: BuildText(text: AppLocalizations.of(context)!.theme),
               children: [
                 InkWell(
                   onTap: () {
@@ -37,20 +38,23 @@ class _AccountState extends State<Account> {
                   },
                   child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: const BuildText(text: "Dark")),
+                      child:
+                          BuildText(text: AppLocalizations.of(context)!.dark)),
                 ),
                 InkWell(
                   onTap: () {},
                   child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: const BuildText(text: "Light")),
+                      child:
+                          BuildText(text: AppLocalizations.of(context)!.light)),
                 ),
                 InkWell(
-                  onTap: () {},
-                  child: Container(
+                    onTap: () {},
+                    child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: const BuildText(text: "System ")),
-                ),
+                      child:
+                          BuildText(text: AppLocalizations.of(context)!.system),
+                    )),
               ],
             ),
             ExpansionTile(
@@ -58,12 +62,12 @@ class _AccountState extends State<Account> {
                 expandedAlignment: Alignment.centerLeft,
                 childrenPadding:
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                title: const BuildText(text: "Language"),
+                title: BuildText(text: AppLocalizations.of(context)!.language),
                 children: List.generate(locale.length, (index) {
                   return InkWell(
                     onTap: () {
                       HandleLocale().changeLocale(
-                          locale[index]['language'], locale[index]['locale']);
+                          locale[index]['code'], locale[index]['locale']);
                     },
                     child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -84,8 +88,8 @@ class _AccountState extends State<Account> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const BuildText(
-                        text: "Quit App",
+                      child: BuildText(
+                        text: AppLocalizations.of(context)!.quit,
                         color: Colors.white,
                       )),
                 ],

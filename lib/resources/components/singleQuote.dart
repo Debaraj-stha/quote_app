@@ -5,6 +5,7 @@ import 'package:quote/reposiory/quotesRepo.dart';
 import 'package:quote/resources/components/IconButton.dart';
 import 'package:quote/resources/components/buildImage.dart';
 import 'package:quote/view_model/homeViewMOdel.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SingleQuote extends StatefulWidget {
   const SingleQuote(
@@ -144,7 +145,7 @@ class _SingleQuoteState extends State<SingleQuote>
                           ? Colors.red
                           : _colorTween.value!,
                       size: _animation.value,
-                      text: "Favourite",
+                      text: AppLocalizations.of(context)!.favourite,
                       callback: () {
                         _quoteViewModel.addToFavouriteList(_controller, q);
                       },
@@ -153,7 +154,7 @@ class _SingleQuoteState extends State<SingleQuote>
                 ),
                 BuildIconButton(
                   icon: Icons.copy,
-                  text: "Copy",
+                  text: AppLocalizations.of(context)!.copy,
                   callback: () async {
                     await _quoteViewModel.copyToClipBoard(q.quote);
                   },
@@ -163,7 +164,7 @@ class _SingleQuoteState extends State<SingleQuote>
                   callback: () async {
                     await _quoteViewModel.shareQuote(q.quote);
                   },
-                  text: "Share",
+                  text: AppLocalizations.of(context)!.share,
                 ),
               ],
             )
