@@ -6,13 +6,12 @@ class BuildIconButton extends StatelessWidget {
       required this.icon,
       this.text = "",
       required this.callback,
-      this.size = 30,
-      this.color = Colors.black});
+      this.size = 30});
   final IconData icon;
   final String text;
   final double size;
   final VoidCallback callback;
-  final Color color;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -24,9 +23,8 @@ class BuildIconButton extends StatelessWidget {
             Icon(
               icon,
               size: size,
-              color: color,
             ),
-            Text(text)
+            Text(text, style: Theme.of(context).primaryTextTheme.titleSmall)
           ],
         ),
       ),

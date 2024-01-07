@@ -34,7 +34,7 @@ class _SettingState extends State<Setting> {
               children: [
                 InkWell(
                   onTap: () {
-                    ThemeController().changeThemeMode();
+                    HandleTheme().changeTheme("dark");
                   },
                   child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -42,14 +42,18 @@ class _SettingState extends State<Setting> {
                           BuildText(text: AppLocalizations.of(context)!.dark)),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    HandleTheme().changeTheme("light");
+                  },
                   child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child:
                           BuildText(text: AppLocalizations.of(context)!.light)),
                 ),
                 InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      HandleTheme().changeTheme("system");
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child:
@@ -82,15 +86,15 @@ class _SettingState extends State<Setting> {
               child: Row(
                 children: [
                   TextButton(
-                      style: const ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll<Color>(Colors.red)),
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: BuildText(
-                        text: AppLocalizations.of(context)!.quit,
-                        color: Colors.white,
+                      child: Text(
+                        "Quit",
+                        style: Theme.of(context)
+                            .primaryTextTheme
+                            .titleSmall!
+                            .copyWith(color: Colors.white),
                       )),
                 ],
               ),

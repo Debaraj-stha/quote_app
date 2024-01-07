@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'reposiory/themes.dart';
 
 import 'view/setting.dart';
+
 import 'view/userIntroPage.dart';
 
 void main() async {
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     if (kDebugMode) {
       print("my locale$locale");
+      print("my theme $themeMode");
     }
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
@@ -58,7 +60,9 @@ class MyApp extends StatelessWidget {
         ],
         theme: Themes().lightTheme,
         darkTheme: Themes().darkTheme,
+        
         themeMode: themeMode,
+   
         home: isAlreadyOpenApp ? const MyHomePage() : const UserIntroPage()
         // const MyHomePage(title: 'Flutter Demo Home Page'),
         );
@@ -101,8 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
               selectedFontSize: 16,
               elevation: 0,
               showUnselectedLabels: false,
-              selectedIconTheme: const IconThemeData(color: Colors.black),
-              selectedItemColor: Colors.black,
+
               unselectedItemColor: const Color.fromARGB(178, 2, 1, 1),
               items: [
                 BottomNavigationBarItem(

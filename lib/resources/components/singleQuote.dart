@@ -6,6 +6,7 @@ import 'package:quote/resources/components/IconButton.dart';
 import 'package:quote/resources/components/buildImage.dart';
 import 'package:quote/view_model/homeViewMOdel.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SingleQuote extends StatefulWidget {
   const SingleQuote(
@@ -74,11 +75,8 @@ class _SingleQuoteState extends State<SingleQuote>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "${widget.currentQuote}  of  ${widget.totalQuotes}",
-          style: const TextStyle(
-              color: Colors.black, fontSize: 15, fontFamily: "Roboto"),
-        ),
+        title: Text("${widget.currentQuote}  of  ${widget.totalQuotes}",
+            style: Theme.of(context).primaryTextTheme.titleSmall),
         elevation: 0,
         backgroundColor: widget.color,
       ),
@@ -92,38 +90,43 @@ class _SingleQuoteState extends State<SingleQuote>
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const BuildImage(assetURL: "assets/quote_right.png"),
+            // const BuildImage(assetURL: "assets/quote_right.png"),
+            SvgPicture.asset(
+              "assets/quote_left.svg",
+              color: Theme.of(context).primaryColor,
+              height: 40,
+            ),
             const SizedBox(
               height: 20,
             ),
             Text(
               q.quote,
-              style: const TextStyle(
-                  fontSize: 20,
-                  fontFamily: "Roboto",
-                  fontWeight: FontWeight.w500),
+              style: Theme.of(context).primaryTextTheme.titleMedium,
             ),
             const SizedBox(
               height: 20,
             ),
-            const BuildImage(assetURL: "assets/quote_left.png"),
+            SvgPicture.asset("assets/quote_right.svg",
+                height: 40, color: Theme.of(context).primaryColor),
             const SizedBox(
               height: 30,
             ),
             Row(
               children: [
-                const BuildImage(
-                    assetURL: "assets/hand-writing-with-ballpen.png"),
+                // const BuildImage(
+                //     assetURL: "assets/hand-writing-with-ballpen.png"),
+                SvgPicture.asset("assets/hand.svg",
+                    height: 40, color: Theme.of(context).primaryColor
+                    // colorFilter:
+                    //     const ColorFilter.mode(Colors.white, BlendMode.darken),
+                    ),
                 const SizedBox(
                   width: 15,
                 ),
                 Expanded(
                   child: Text(
                     q.author,
-                    style: const TextStyle(
-                        fontSize: 25,
-                        fontFamily: "Roboto",
-                        fontWeight: FontWeight.w700),
+                    style: Theme.of(context).primaryTextTheme.titleLarge,
                   ),
                 ),
               ],
@@ -141,9 +144,9 @@ class _SingleQuoteState extends State<SingleQuote>
                       icon: _quoteViewModel.isFavourite.value
                           ? Icons.favorite
                           : Icons.favorite_border_rounded,
-                      color: _quoteViewModel.isFavourite.value
-                          ? Colors.red
-                          : _colorTween.value!,
+                      // color: _quoteViewModel.isFavourite.value
+                      //     ? Colors.red
+                      //     : _colorTween.value!,
                       size: _animation.value,
                       text: AppLocalizations.of(context)!.favourite,
                       callback: () {
